@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Bridge is Ownable {
     using Counters for Counters.Counter;
-    event SwapInitialised(uint chainIdTo, address token, address from, address to, uint amount, uint nonce);
-    event RedeemCompleted(uint chainIdFrom, address token, address from, address to, uint amount, uint nonce);
+    event SwapInitialised(uint indexed chainIdTo, address indexed from, address indexed to, address token, uint amount, uint nonce);
+    event RedeemCompleted(uint indexed chainIdFrom, address indexed from, address indexed to, address token, uint amount, uint nonce);
 
     address public validator;
 
@@ -21,7 +21,7 @@ contract Bridge is Ownable {
 
     mapping (IERC20 => bool) public supportedTokens;
     mapping (uint => bool) public supportedChainIds;
-    mapping (bytes => bool) private processedTxes;
+    mapping (bytes => bool) private processedTxns;
 
     function swap(uint chainIdTo, address token, address to, uint amount) external {
         IERC20 erc20 = IERC20(token);
@@ -30,22 +30,22 @@ contract Bridge is Ownable {
 
         erc20.burnFrom(msg.sender, amount);
         nonceGenerator.increment();
-        emit SwapInitialised(chainIdTo, token, msg.sender, to, amount, nonceGenerator.current());
+        emit SwapInitialised(chainIdTo, msg.sender, to, token, amount, nonceGenerator.current());
     }
 
     function redeem(uint chainIdFrom, address token, address from, uint amount, uint nonce, bytes memory signature) external {
         IERC20 erc20 = IERC20(token);
         require(supportedChainIds[chainIdFrom], "Blockchain is not supported");
         require(supportedTokens[erc20], "Token is not supported");
-        require(processedTxes[signature] == false, "Transaction is already processed");
+        require(processedTxns[signature] == false, "Transaction is already processed");
 
-        bytes32 hashMsg = keccak256(abi.encodePacked(chainIdFrom, token, from, amount, nonce));
+        bytes32 hashMsg = keccak256(abi.encodePacked(chainIdFrom, token, from, msg.sender, amount, nonce));
         address signer = ECDSA.recover(ECDSA.toEthSignedMessageHash(hashMsg), signature);
 
         require(signer == validator, "Wrong signer for signature");
 
         erc20.mint(msg.sender, amount);
-        emit RedeemCompleted(chainIdFrom, token, from, msg.sender, amount, nonce);
+        emit RedeemCompleted(chainIdFrom, from, msg.sender, token, amount, nonce);
     }
 
     function updateChainSupport(uint chainId, bool supported) external onlyOwner {
