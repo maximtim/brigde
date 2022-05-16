@@ -36,7 +36,7 @@ export async function loggedSafeExecTx(contract : Contract, funcName : string, .
   });
   console.log("Txn hash:", txRes.transactionHash);
   console.log("Event logs:", eventLogs);
-  console.log("Event logs full:", txRes.events);
+  // console.log("Event logs full:", txRes.events);
 }
 
 export type Contracts = { bridge: string, token: string };
