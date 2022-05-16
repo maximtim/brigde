@@ -55,4 +55,8 @@ contract Bridge is Ownable {
     function updateTokenSupport(address token, bool supported) external onlyOwner {
         supportedTokens[IERC20(token)] = supported;
     }
+
+    function updateValidator(address validator_) external onlyOwner {
+        validator = validator_;
+    }
 }
