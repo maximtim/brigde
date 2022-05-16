@@ -34,6 +34,7 @@ export async function loggedSafeExecTx(contract : Contract, funcName : string, .
       });
     return eventLog;
   });
+  console.log("Txn hash:", txRes.transactionHash);
   console.log("Event logs:", eventLogs);
   console.log("Event logs full:", txRes.events);
 }

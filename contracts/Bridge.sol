@@ -42,8 +42,9 @@ contract Bridge is Ownable {
         bytes32 hashMsg = keccak256(abi.encodePacked(chainIdFrom, token, from, msg.sender, amount, nonce));
         address signer = ECDSA.recover(ECDSA.toEthSignedMessageHash(hashMsg), signature);
 
-        require(signer == validator, "Wrong signer for signature");
-
+        require(signer == validator, "Wrong signature");
+        
+        processedTxns[signature] = true;
         erc20.mint(msg.sender, amount);
         emit RedeemCompleted(chainIdFrom, from, msg.sender, token, amount, nonce);
     }

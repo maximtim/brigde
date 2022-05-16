@@ -19,8 +19,6 @@ task("bridge-redeem-test", "Redeem transfered tokens from bridge")
         const testToken = testToken0 as unknown as TestToken;
         const signer = (await hre.ethers.getSigners())[0];
 
-        /// то, что дальше - неверно! ошибка в tokenAddress
-
         const hashMsg = hre.ethers.utils.solidityKeccak256(
             ["uint", "address", "address", "address", "uint", "uint"], 
             [chainidfrom, testToken0.address, from, await signer.getAddress(), amount, nonce]
