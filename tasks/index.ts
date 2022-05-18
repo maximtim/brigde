@@ -2,6 +2,7 @@ import "./accounts";
 import "./lib";
 import "./swap";
 import "./redeem-test";
+import "./redeem-prod";
 import "./update-chain-support";
 import "./update-token-support";
 import "./grant-burner-role";

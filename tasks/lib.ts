@@ -39,10 +39,23 @@ export async function loggedSafeExecTx(contract : Contract, funcName : string, .
   // console.log("Event logs full:", txRes.events);
 }
 
-export type Contracts = { bridge: string, token: string };
-export const ContractsEnv : {
+export type Contracts = { bridge: string, token: string, validatorKey: string };
+export const ContractsEnvConfig : {
   [networkName: string] : Contracts
 } = {
-  "rinkeby" : {bridge: "BRIDGE_ETH_RINKEBY", token: "TOKEN_ETH_RINKEBY"},
-  "bscTestnet" : {bridge: "BRIDGE_BSC", token: "TOKEN_BSC"}
+  "rinkeby" : {bridge: "BRIDGE_ETH_RINKEBY", token: "TOKEN_ETH_RINKEBY", validatorKey: "VALIDATOR_KEY"},
+  "bscTestnet" : {bridge: "BRIDGE_BSC", token: "TOKEN_BSC", validatorKey: "VALIDATOR_KEY"}
 };
+
+export type Msg = {
+  chainIdFrom: string,
+  chainIdTo: string,
+  tokenFrom: string,
+  tokenTo: string,
+  userFrom: string,
+  userTo: string,
+  amount: string,
+  nonce: string
+};
+
+export type DbRecord = {message: Msg, signature: string, pending: boolean};
